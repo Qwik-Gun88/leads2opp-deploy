@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9f9f9;
+  }
+  
+  input[type="file"] {
+    margin: 16px 0;
+  }
+  
+  .MuiPaper-root {
+    padding: 1rem;
+  }
+  
+  .MuiTableCell-head {
+    font-weight: bold;
+  }
+  
+  .MuiButton-contained {
+    background-color: #1976d2;
+    color: white;
+  }
+  
+  .MuiButton-contained:hover {
+    background-color: #115293;
+  }
+  
