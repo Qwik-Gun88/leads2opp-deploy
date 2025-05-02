@@ -70,22 +70,57 @@ const EmailEditorPanel = ({ stepName = 'Email 1', onGenerate, onSave }) => {
 
       <Divider sx={{ my: 2, borderColor: '#374151' }} />
 
-      <Box sx={{ display: 'flex', gap: 2 }}>
-        <Button
-          variant="contained"
-          onClick={() => onGenerate({ subject, body })}
-          sx={{ background: '#4f46e5' }}
-        >
-          ⚡ Generate with AI
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={() => onSave({ subject, body })}
-          sx={{ borderColor: '#4f46e5', color: '#c7d2fe' }}
-        >
-          💾 Save Email
-        </Button>
-      </Box>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+  <Button
+    variant="contained"
+    onClick={() => onGenerate({ subject, body })}
+    sx={{ background: '#4f46e5' }}
+  >
+    ⚡ Generate with AI
+  </Button>
+
+  <Button
+    variant="outlined"
+    onClick={() => onSave({ subject, body })}
+    sx={{ borderColor: '#4f46e5', color: '#c7d2fe' }}
+  >
+    💾 Save Email
+  </Button>
+
+  <Button
+    variant="contained"
+    onClick={async () => {
+      try {
+        const res = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: 'fiyaz@leads2opp.com', // TODO: Replace with selected contact's email
+            subject,
+            body,
+          }),
+        });
+
+        const data = await res.json();
+        alert(data.message || data.error);
+      } catch (err) {
+        alert('❌ Failed to send email');
+      }
+    }}
+    sx={{ background: '#10b981' }}
+  >
+    ✉️ Send Email
+  </Button>
+
+  <Button
+    variant="outlined"
+    onClick={() => alert('💾 Template saved (mock)')}
+    sx={{ borderColor: '#10b981', color: '#d1fae5' }}
+  >
+    💾 Save Template
+  </Button>
+</Box>
+
     </Box>
   );
 };
