@@ -11,6 +11,8 @@ import mongoose from "mongoose";
 import cron from "node-cron";
 import * as dotenv from "dotenv";
 import Contact from "./models/Contact.js";
+import sendEmailRoute from './routes/sendEmail.js';
+
 
 // ✅ Load environment variables
 dotenv.config();
@@ -22,6 +24,8 @@ const __dirname = dirname(__filename);
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/api', sendEmailRoute);
+
 
 // ✅ Serve frontend static files
 app.use(express.static(path.join(__dirname, "../dist")));
