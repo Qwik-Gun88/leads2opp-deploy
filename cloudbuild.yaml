@@ -2,7 +2,6 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  # 🔧 Build frontend
   - name: 'node:20-slim'
     entrypoint: 'bash'
     dir: 'frontend'
@@ -11,15 +10,12 @@ steps:
       - |
         npm install && npm run build
 
-  # 🐳 Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/backend-api', '.']
 
-  # 📤 Push Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/backend-api']
 
-  # 🚀 Deploy to Cloud Run with Secret Manager
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -33,10 +29,9 @@ steps:
       - --platform
       - managed
       - --allow-unauthenticated
-      - --update-env-vars
-      - TWILIO_AUTH_TOKEN=d1164435f230520ddfc03eb3b1dbe125,TWILIO_PHONE_NUMBER=+15392528842
       - --update-secrets
       - FIREBASE_CONFIG=firebase-config:latest
-
-images:
-  - 'gcr.io/$PROJECT_ID/backend-api'
+      - --command
+      - node
+      - --args
+      - backend/server.js
