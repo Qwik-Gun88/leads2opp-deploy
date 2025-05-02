@@ -1,16 +1,21 @@
 import admin from 'firebase-admin';
 import fs from 'fs';
 
-// ✅ Load Firebase config from the mounted secret path
-const serviceAccount = JSON.parse(
-  fs.readFileSync('/secrets/FIREBASE_CONFIG', 'utf-8')
-);
+try {
+  const configPath = '/secrets/FIREBASE_CONFIG';
+  console.log(`🔐 Loading Firebase config from: ${configPath}`);
 
-// ✅ Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+  const serviceAccount = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
-// ✅ Export Firestore instance
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+
+  console.log('✅ Firebase initialized');
+} catch (err) {
+  console.error('❌ Failed to load Firebase config or initialize:', err.message);
+  process.exit(1); // Important: exit to prevent Cloud Run hanging
+}
+
 const db = admin.firestore();
 export default db;
