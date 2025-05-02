@@ -4,19 +4,15 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import fs from "fs";
-<<<<<<< HEAD
-import sendEmailRoute from "./routes/sendEmail.js";
-=======
+import multer from "multer";
 import mongoose from "mongoose";
 import cron from "node-cron";
 import * as dotenv from "dotenv";
+import sendEmailRoute from "./routes/sendEmail.js";
 import Contact from "./models/Contact.js";
-import sendEmailRoute from './routes/sendEmail.js';
+import db from "./utils/firebase.js"; // Firestore init
 
->>>>>>> rollback-to-stable
-
-// ✅ Firebase Firestore is now used (import in relevant modules)
-import db from "./utils/firebase.js"; // this ensures Firestore initializes
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,45 +20,24 @@ const __dirname = dirname(__filename);
 const app = express();
 app.use(cors());
 app.use(express.json());
-<<<<<<< HEAD
-app.use("/api", sendEmailRoute);
-=======
-app.use('/api', sendEmailRoute);
 
->>>>>>> rollback-to-stable
+// ✅ Routes
+app.use("/api", sendEmailRoute);
 
 // ✅ Serve frontend static files
 app.use(express.static(path.join(__dirname, "../dist")));
 
-<<<<<<< HEAD
-=======
-// ✅ MongoDB connection using .env
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-// ❌ Twilio temporarily disabled for stability
-/*
-let client = null;
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
-
-if (accountSid && authToken) {
-  client = twilio(accountSid, authToken);
-  console.log("✅ Twilio client initialized");
-} else {
-  console.warn("⚠️ Twilio credentials not found. Skipping Twilio client init.");
-}
-*/
+  useUnifiedTopology: true,
+})
+.then(() => console.log("✅ MongoDB connected"))
+.catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // ✅ File upload middleware
 const upload = multer({ dest: "uploads/" });
 
->>>>>>> rollback-to-stable
 // ✅ Debug route to verify frontend build is served
 app.get("/debug", (req, res) => {
   try {
@@ -74,7 +49,7 @@ app.get("/debug", (req, res) => {
   }
 });
 
-// ✅ Fallback route: serve React app for all non-API routes
+// ✅ Fallback route: serve React app
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../dist/index.html"));
 });
