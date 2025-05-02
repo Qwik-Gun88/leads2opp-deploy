@@ -1,21 +1,19 @@
-# Use a lightweight Node image
+# Use slim Node image
 FROM node:20-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install backend dependencies
+# Copy only backend package files and install deps
 COPY backend/package*.json ./backend/
 RUN cd backend && npm install
 
-# Copy backend source code
+# Copy backend source
 COPY backend ./backend
 
-# Copy prebuilt frontend output
+# Copy static frontend files into /dist
 COPY frontend/dist ./dist
 
-# Expose the backend port
+# Expose port and run
 EXPOSE 8080
-
-# Run the server
 CMD ["node", "backend/server.js"]
