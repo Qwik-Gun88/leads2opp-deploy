@@ -1,6 +1,5 @@
 import express from 'express';
 import sendEmail from '../utils/emailSender.js';
-import db from '../utils/firebase.js';
 
 const router = express.Router();
 
@@ -13,12 +12,9 @@ router.post('/send-email', async (req, res) => {
 
   try {
     await sendEmail(to, subject, body);
-    await db.collection('email_logs').add({
-        to,
-        subject,
-        body,
-        sentAt: new Date(),
-      });
+
+    // If needed, logging can be added here using a database or file system
+
     res.status(200).json({ message: 'Email sent successfully' });
   } catch (err) {
     console.error('❌ Error sending email:', err);
