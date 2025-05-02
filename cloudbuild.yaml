@@ -34,8 +34,7 @@ steps:
       - managed
       - --allow-unauthenticated
       - --update-env-vars
-      - |
-        MONGO_URI=mongodb+srv://fiyaz7214:Hamsa1234@cluster0.8huw80x.mongodb.net/leads2opp?retryWrites=true&w=majority&appName=Cluster0,TWILIO_AUTH_TOKEN=d1164435f230520ddfc03eb3b1dbe125,TWILIO_PHONE_NUMBER=+15392528842
+      - TWILIO_AUTH_TOKEN=d1164435f230520ddfc03eb3b1dbe125,TWILIO_PHONE_NUMBER=+15392528842
       - --update-secrets
       - FIREBASE_CONFIG=firebase-config:latest
 
