@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 // trigger build
 // retrigger deploy with secret
+=======
+// force trigger
+>>>>>>> rollback-to-stable
