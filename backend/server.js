@@ -10,7 +10,6 @@ import cron from "node-cron";
 import * as dotenv from "dotenv";
 import sendEmailRoute from "./routes/sendEmail.js";
 import Contact from "./models/Contact.js";
-import db from "./utils/firebase.js"; // Firestore init
 
 dotenv.config();
 
