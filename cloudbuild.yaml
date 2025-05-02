@@ -1,3 +1,6 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
   # 🔧 Build frontend
   - name: 'node:20-slim'
@@ -12,11 +15,11 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/backend-api', '.']
 
-  # 📤 Push Docker image to Container Registry
+  # 📤 Push Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/backend-api']
 
-  # 🚀 Deploy to Cloud Run with environment variables
+  # 🚀 Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -31,11 +34,9 @@ steps:
       - 'managed'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - |
-        MONGO_URI=mongodb+srv://fiyaz7214:Hamsa1234@cluster0.8huw80x.mongodb.net/leads2opp?retryWrites=true&w=majority&appName=Cluster0,
-        TWILIO_ACCOUNT_SID=REDACTED_TWILIO_SID,
-        TWILIO_AUTH_TOKEN=d1164435f230520ddfc03eb3b1dbe125,
-        TWILIO_PHONE_NUMBER=+15392528842
+      - 'MONGO_URI=mongodb+srv://fiyaz7214:Hamsa1234@cluster0.8huw80x.mongodb.net/leads2opp?retryWrites=true&w=majority&appName=Cluster0'
+      - 'TWILIO_AUTH_TOKEN=d1164435f230520ddfc03eb3b1dbe125'
+      - 'TWILIO_PHONE_NUMBER=+15392528842'
 
 images:
   - 'gcr.io/$PROJECT_ID/backend-api'
