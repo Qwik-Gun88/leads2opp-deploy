@@ -1,22 +1,7 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import EmailTemplate from '../models/EmailTemplate.js';
 
 const router = express.Router();
-
-// Define the schema
-const templateSchema = new mongoose.Schema({
-  name: String,
-  subject: String,
-  body: String,
-  signature: String,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  }
-});
-
-// Create the model
-const EmailTemplate = mongoose.model('EmailTemplate', templateSchema);
 
 // POST /api/templates - save a new template
 router.post('/templates', async (req, res) => {
@@ -31,5 +16,4 @@ router.post('/templates', async (req, res) => {
   }
 });
 
-// (We’ll add GET later)
 export default router;
