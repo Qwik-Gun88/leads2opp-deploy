@@ -9,4 +9,7 @@ const emailTemplateSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model('EmailTemplate', emailTemplateSchema);
+const EmailTemplate =
+  mongoose.models.EmailTemplate || mongoose.model('EmailTemplate', emailTemplateSchema);
+
+export default EmailTemplate;
