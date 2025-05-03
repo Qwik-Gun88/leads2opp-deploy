@@ -10,6 +10,9 @@ import cron from "node-cron";
 import * as dotenv from "dotenv";
 import sendEmailRoute from "./routes/sendEmail.js";
 import Contact from "./models/Contact.js";
+import emailTemplatesRoute from './routes/emailTemplates.js';
+import templatesRoute from './routes/templates.js';
+
 
 dotenv.config();
 
@@ -22,6 +25,8 @@ app.use(express.json());
 
 // ✅ Routes
 app.use("/api", sendEmailRoute);
+app.use('/api/templates', emailTemplatesRoute);
+app.use('/api', templatesRoute);
 
 // ✅ Serve frontend static files
 app.use(express.static(path.join(__dirname, "../dist")));

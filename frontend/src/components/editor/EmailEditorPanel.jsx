@@ -25,6 +25,10 @@ const EmailEditorPanel = ({ stepName = 'Email 1', onGenerate, onSave }) => {
     const formattedToken = `{{${token}}}`;
     setBody((prev) => prev + ' ' + formattedToken);
   };
+  const [signature, setSignature] = useState(() => {
+    return localStorage.getItem('emailSignature') || '';
+  });
+  
 
   return (
     <Box sx={{ background: '#111827', p: 4, borderRadius: 2, color: '#fff' }}>
@@ -71,6 +75,25 @@ const EmailEditorPanel = ({ stepName = 'Email 1', onGenerate, onSave }) => {
       <Divider sx={{ my: 2, borderColor: '#374151' }} />
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+      <Divider sx={{ my: 2, borderColor: '#374151' }} />
+<Typography variant="body2" color="gray" sx={{ mb: 1 }}>
+  ✍️ Email Signature:
+</Typography>
+<TextField
+  fullWidth
+  label="Signature"
+  variant="outlined"
+  multiline
+  rows={3}
+  value={signature}
+  onChange={(e) => {
+    setSignature(e.target.value);
+    localStorage.setItem('emailSignature', e.target.value);
+  }}
+  sx={{ mb: 3 }}
+  InputProps={{ sx: { color: '#fff', background: '#1f2937' } }}
+/>
+
   <Button
     variant="contained"
     onClick={() => onGenerate({ subject, body })}
@@ -80,12 +103,13 @@ const EmailEditorPanel = ({ stepName = 'Email 1', onGenerate, onSave }) => {
   </Button>
 
   <Button
-    variant="outlined"
-    onClick={() => onSave({ subject, body })}
-    sx={{ borderColor: '#4f46e5', color: '#c7d2fe' }}
-  >
-    💾 Save Email
-  </Button>
+  variant="outlined"
+  onClick={() => onSave({ subject, body: body + '<br/><br/>' + signature })}
+  sx={{ borderColor: '#4f46e5', color: '#c7d2fe' }}
+>
+  💾 Save Email
+</Button>
+
 
   <Button
     variant="contained"

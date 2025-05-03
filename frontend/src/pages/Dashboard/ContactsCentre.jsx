@@ -1,7 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  TextField, Checkbox, Drawer, Button, TablePagination, IconButton
+  Box,
+  Typography,
+  Paper,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Checkbox,
+  TextField,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Drawer,
 } from '@mui/material';
 import { Email, Phone, Info } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +44,7 @@ const mockLists = [
 ];
 
 const ContactsCentre = () => {
-  const [selectedList] = useState(mockLists[0]);
+  const [selectedList, setSelectedList] = useState(mockLists[0]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIds, setSelectedIds] = useState([]);
   const [page, setPage] = useState(0);
@@ -35,6 +52,8 @@ const ContactsCentre = () => {
   const [selectedContact, setSelectedContact] = useState(null);
   const [activeEditor, setActiveEditor] = useState(null);
   const navigate = useNavigate();
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+
 
   useEffect(() => {
     document.title = 'Contacts Centre | leads2opp';
@@ -49,6 +68,14 @@ const ContactsCentre = () => {
   const filteredContacts = selectedList.contacts.filter(contact =>
     Object.values(contact).some(val => typeof val === 'string' && val.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+  const [newContact, setNewContact] = useState({
+    name: '',
+    email: '',
+    company: '',
+    title: '',
+    city: '',
+  });
+  
 
   return (
     <>
@@ -109,8 +136,7 @@ const ContactsCentre = () => {
             </>
           )}
         </Box>
-
-
+        
         {/* Main Content */}
         <Box sx={{ flex: 1, px: 4, pt: 10, pb: 6 }}>
         <Typography variant="h4" fontWeight={700} mb={4} sx={{ color: '#38bdf8', textShadow: '0 0 10px #00e6ff' }}>📇 Contacts Centre</Typography>
@@ -123,78 +149,100 @@ const ContactsCentre = () => {
               </Typography>
             </Box>
           </Paper>
-
-          {/* Search + Action Bar */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-            <TextField
-              variant="outlined"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              fullWidth
-              sx={{
-                backgroundColor: '#1e2a38',
-                borderRadius: 2,
-                '& input': { color: 'white' },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: '#334155' },
-                  '&:hover fieldset': { borderColor: '#00e6ff' },
-                  '&.Mui-focused fieldset': { borderColor: '#00e6ff' },
-                }
-              }}
-            />
-            <Button
-              variant="outlined"
-              sx={{ color: '#00e6ff', borderColor: '#00e6ff', '&:hover': { backgroundColor: '#13232f' } }}
-            >
-              ⚙️ Filters
-            </Button>
-            <Button
-  variant="contained"
-  disabled={selectedIds.length === 0}
-  onClick={() => {
-    const contactsToCall = selectedList.contacts.filter(c => selectedIds.includes(c.id));
-    navigate('/auto-dialer', { state: { selectedContacts: contactsToCall } });
-  }}
-  sx={{
-    backgroundColor: '#00e6ff',
-    color: '#000',
-    fontWeight: 'bold',
-    boxShadow: '0 0 10px #00e6ff88',
-    '&.Mui-disabled': {
-      backgroundColor: '#1e2a38',
-      color: '#5c7288',
-      boxShadow: 'none',
-      opacity: 0.6,
-    },
-  }}
->
-  📞 Call Selected
-</Button>
-
-<Button
-  variant="contained"
-  disabled={selectedIds.length === 0}
-  onClick={() => navigate('/design-sequence', { state: { from: 'contacts-centre' } })}
-  sx={{
-    backgroundColor: '#38bdf8',
-    color: '#000',
-    fontWeight: 'bold',
-    boxShadow: '0 0 10px #38bdf877',
-    '&.Mui-disabled': {
-      backgroundColor: '#1e2a38',
-      color: '#5c7288',
-      boxShadow: 'none',
-      opacity: 0.6,
-    },
-  }}
->
-  📋 Assign to Sequence
-</Button>
-
-
-          </Box>
           
+          {/* Search + Action Bar */}
+          <Box
+  sx={{
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 2,
+    mb: 3,
+    justifyContent: 'space-between',
+  }}
+>
+  <TextField
+    variant="outlined"
+    placeholder="Search..."
+    value={searchTerm}
+    onChange={handleSearchChange}
+    sx={{
+      width: '260px', // smaller fixed width
+      backgroundColor: '#1e2a38',
+      borderRadius: 2,
+      '& input': { color: 'white' },
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': { borderColor: '#334155' },
+        '&:hover fieldset': { borderColor: '#00e6ff' },
+        '&.Mui-focused fieldset': { borderColor: '#00e6ff' },
+      },
+    }}
+  />
+
+  <Button
+    variant="outlined"
+    sx={{
+      color: '#00e6ff',
+      borderColor: '#00e6ff',
+      '&:hover': { backgroundColor: '#13232f' },
+    }}
+  >
+    ⚙️ Filters
+  </Button>
+
+  <Button
+    variant="contained"
+    onClick={() => setOpenAddDialog(true)}
+    sx={{ background: '#4f46e5' }}
+  >
+    ➕ Add Contact
+  </Button>
+
+  <Button
+    variant="contained"
+    disabled={selectedIds.length === 0}
+    onClick={() => {
+      const contactsToCall = selectedList.contacts.filter(c => selectedIds.includes(c.id));
+      navigate('/auto-dialer', { state: { selectedContacts: contactsToCall } });
+    }}
+    sx={{
+      backgroundColor: '#00e6ff',
+      color: '#000',
+      fontWeight: 'bold',
+      boxShadow: '0 0 10px #00e6ff88',
+      '&.Mui-disabled': {
+        backgroundColor: '#1e2a38',
+        color: '#5c7288',
+        boxShadow: 'none',
+        opacity: 0.6,
+      },
+    }}
+  >
+    📞 Call Selected
+  </Button>
+
+  <Button
+    variant="contained"
+    disabled={selectedIds.length === 0}
+    onClick={() =>
+      navigate('/design-sequence', { state: { from: 'contacts-centre' } })
+    }
+    sx={{
+      backgroundColor: '#38bdf8',
+      color: '#000',
+      fontWeight: 'bold',
+      boxShadow: '0 0 10px #38bdf877',
+      '&.Mui-disabled': {
+        backgroundColor: '#1e2a38',
+        color: '#5c7288',
+        boxShadow: 'none',
+        opacity: 0.6,
+      },
+    }}
+  >
+    📋 Assign to Sequence
+  </Button>
+</Box>       
           {/* Table */}
           <TableContainer component={Paper} sx={{ backgroundColor: '#1c2a38', borderRadius: 3 }}>
             <Table>
@@ -300,6 +348,43 @@ const ContactsCentre = () => {
 </Drawer>
 
       </Box>
+      <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} maxWidth="sm" fullWidth>
+  <DialogTitle>Add New Contact</DialogTitle>
+  <DialogContent dividers>
+    {['name', 'email', 'company', 'title', 'city'].map((field) => (
+      <TextField
+        key={field}
+        label={field.charAt(0).toUpperCase() + field.slice(1)}
+        fullWidth
+        margin="dense"
+        value={newContact[field]}
+        onChange={(e) =>
+          setNewContact({ ...newContact, [field]: e.target.value })
+        }
+      />
+    ))}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenAddDialog(false)}>Cancel</Button>
+    <Button
+      variant="contained"
+      onClick={() => {
+        const newEntry = {
+          id: Date.now(),
+          ...newContact,
+        };
+        setSelectedList((prev) => ({
+          ...prev,
+          contacts: [...prev.contacts, newEntry],
+        }));
+        setNewContact({ name: '', email: '', company: '', title: '', city: '' });
+        setOpenAddDialog(false);
+      }}
+    >
+      Save Contact
+    </Button>
+  </DialogActions>
+</Dialog>
     </>
   );
 };
