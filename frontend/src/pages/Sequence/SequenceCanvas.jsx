@@ -33,8 +33,8 @@ import EmailEditorPanel from '../../components/editor/EmailEditorPanel';
 import CallEditorPanel from '../../components/editor/CallEditorPanel';
 import TextEditorPanel from '../../components/editor/TextEditorPanel';
 import { useLocation } from 'react-router-dom';
-
-
+import AIPromptBar from '../../components/assistant/AIPromptBar';
+import { generateAISequence } from './aiSequenceGenerator';
 
 
 
@@ -78,6 +78,9 @@ const fromPage = location.state?.from || 'dashboard'; // fallback to dashboard i
   const [editingName, setEditingName] = useState(false);
   const [editingNode, setEditingNode] = useState(null);
   const [selectedNodeData, setSelectedNodeData] = useState(null);
+  const [showAIPromptBar, setShowAIPromptBar] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+
 
 
 
@@ -284,17 +287,75 @@ const fromPage = location.state?.from || 'dashboard'; // fallback to dashboard i
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        px: 3,
+        px: 2,
         zIndex: 1000,
       }}
     >
       {/* Left: Add Buttons */}
       <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button variant="contained" color="info" onClick={() => handleAddNodeClick('email')}>Add Email</Button>
-        <Button variant="contained" color="success" onClick={() => handleAddNodeClick('call')}>Add Call</Button>
-        <Button variant="contained" color="warning" onClick={() => handleAddNodeClick('text')}>Add Text</Button>
-      </Box>
-  
+        <Button variant="outlined" color="info" onClick={() => handleAddNodeClick('email')}>Add Email</Button>
+        <Button variant="outlined" color="success" onClick={() => handleAddNodeClick('call')}>Add Call</Button>
+        <Button variant="outlined" color="warning" onClick={() => handleAddNodeClick('text')}>Add Text</Button>
+        <Box sx={{ ml: 1 }}>
+      <AIPromptBar
+         sx={{
+           width: '300px',  // Adjust width to fit placeholder text
+           input: {
+             color: '#38bdf8',
+           },
+         }}
+      />
+    </Box>
+  </Box>
+{showAIPromptBar && (
+  <Box
+    sx={{
+      mt: '00px',
+    }}
+  >
+    <AIPromptBar
+      sx={{
+        input: {
+          color: '#38bdf8', // Adjusted font color
+        },
+      }}
+      onGenerate={async (prompt) => {
+        console.log('Generating content for:', prompt);
+        setIsGenerating(true);
+        try {
+          const aiGeneratedData = await generateAISequence(prompt);
+          setNodes((prevNodes) => [...prevNodes, ...aiGeneratedData.nodes]);
+          setEdges((prevEdges) => [...prevEdges, ...aiGeneratedData.edges]);
+        } catch (error) {
+          console.error('Error during AI generation:', error);
+        } finally {
+          setIsGenerating(false);
+        }
+      }}
+    />
+  </Box>
+)}
+
+{isGenerating && (
+  <Box
+    sx={{
+      position: 'absolute',
+      top: 80,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      backgroundColor: '#1e293b',
+      color: '#00e676',
+      padding: '8px 16px',
+      borderRadius: '8px',
+      boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.3)',
+      zIndex: 1000,
+    }}
+  >
+    Generating AI Content...
+  </Box>
+)}
+
+
       {/* Center: Editable Title */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {editingName ? (
@@ -315,7 +376,7 @@ const fromPage = location.state?.from || 'dashboard'; // fallback to dashboard i
         ) : (
           <>
             <Typography variant="h6" sx={{ color: '#60a5fa', fontWeight: 600 }}>
-              {sequenceName || 'Untitled Sequence'}
+              {sequenceName || 'Title'}
             </Typography>
             <Button
               variant="text"
@@ -344,10 +405,10 @@ const fromPage = location.state?.from || 'dashboard'; // fallback to dashboard i
     },
   }}
 >
-  ⬅ Return to {fromPage === 'contacts-centre' ? 'Contacts Centre' : 'Dashboard'}
+  ⬅ Back to {fromPage === 'contacts-centre' ? 'Contacts Centre' : 'Dashboard'}
 </Button>
-        <Button variant="contained" color="secondary" onClick={handleReset}>🔄 Reset</Button>
-        <Button variant="contained" color="primary" onClick={() => setSaveDialogOpen(true)}>💾 Save Sequence</Button>
+        <Button variant="outlined" color="primary" onClick={handleReset}>🔄 Reset</Button>
+        <Button variant="outlined" color="primary" onClick={() => setSaveDialogOpen(true)}>💾 Save</Button>
         <Button variant="outlined" onClick={() => navigate('/updates')}>📂 View Sequences</Button>
       </Box>
     </Box>

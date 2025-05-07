@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "euphoric-grin-455920-k5",
+  "private_key_id": "cc478f55fda77564cc75a7d273273bd2740223aa",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCjeV1puNjqABLL\ncNDBTefsDat2eM0DHEbsmpeVIRbOBkybswY8YlbjICR3Sy8UeHUrF9OpSNulm7yr\nsqUrDh8zI6W9mdVyeRk7dNOEi6dfWJsc5QzM2CkAsZVD77jNzUVLMlrQM2TVkL88\nUAEVbE83pyVlZOQtShYOVMSQxaK9REb/oTABw0LHCEJt2uG+GZMqloeIYw2b165t\n5IT5dtoPXSyOTUf8xFkAhe+4AEmADCI5/pwXUuz1p4Xnq5c+OLYg8EktySASqts0\nxMkI4TlLQOWlCrTvOZoc23KgCclz5RgW6QFRalP2W6q0NV794RkXZQ35mXQ2P0c5\nvUpy8a8lAgMBAAECggEABm/3THw9uHs/wjijU9ViSmKga6YmppZ0uYj96p62s+6+\nEgyK9JJHyyJfJT518Ges74E88cffdGZNV/KNPASOmHgxJOX7qIoZwwRe9vN76A6I\nbysa5a8mcDNOBjKYs6v/bE5jkprPf/R2/2REIqiU9wNTPuqp7JmkBDT016Gcvriz\nMqzE3PURphgEMHfx0ms8P6hb8vraabGLfgcPcbVk0wcRKWT1JZGh8ZyS/8TZHAjy\n5u+qJAWoNxy5IAO1Pt9mNukL+AW6ujgVGFrzZPL3/DoXb3qjVhLgCNulXcNfUBP3\nkjBLc9OW1SJeDLJIL3R+dtVI49B5iQpUyA6zWR2fMQKBgQDYpBp1fgTS1yu9lsCP\nHsGvTgxp9nlx8BCC7cxdCYMLEqzxokHOOdCe4JsDS/MDdFSIK2INRinZ2iO1exiU\n/20sftIBQwTUJDdiJKJNzNYGRUy3w/LwqBNyvcSQbQcA3G+MHWcL5Xzg/EnyPsZn\nRmLhtbmtXzambzTUG+zp7NkUFQKBgQDBLHxiNS/7N31DP5eteYTojyGTwM1fZ6Jy\n8Gdd5eZp8F/Dcb/I94XkHCV83fGo20dq2eg2RB+zrdXGrelO6nB3kt2kVgcONjz7\nr30MHsUMqiPtDDYD127z8KQ9iv+zcWof3EIWV7ZUegl4Ev+IXt5SCGSnPt3Fqq8b\nnKNG7Lei0QKBgHHPPCsvKd+NtGfkE4LceInc6b6dAk3t/O6beHoD7jjZ9cr3H7T0\nQHnGqwi/VIojCemDSP6KNqBA7fOAGHjl+veeJDsPdzDvWb0QW8edbW5b56K+qRju\nY1ErCmGJNV2pcFxece0ZAVK8lyhQ/C/zFS1YJ5RB6dbjoxAvH3YAvEXFAoGBAL3E\nMujTMTCL4V030oxTTVKckTKx+87WYwqgyhq/J2w4/Apm6y3Eo15knBsfeTAVQgJg\n0LLGl5IOmmyUGhcxTYzZ1SyEamf2tk/VpHVMoO0BE0vibAm4EEJJyz6+FtWz+7oS\nyUVjozU3saeomijgcWyK3D5EDt8I/v6UEP4yu2+RAoGBAJVacsJd943uXM580P1T\nNbWSGqjUhkIehL3RGMsOoVAjwpdCoBxJKyyl5J0M9pAPCSe3XHMsggxKFRgCdisk\nquQLkuabMRb8+UF6mTfB4PNQ1n+q0k37HnDiov12LEnWzhaP5QeHwmB8gsBN/hjf\nKIvJKaBUAXQeikqPdUT0Laot\n-----END PRIVATE KEY-----\n",
+  "client_email": "leads2opp-ai-agent@euphoric-grin-455920-k5.iam.gserviceaccount.com",
+  "client_id": "112123888033594368218",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/leads2opp-ai-agent%40euphoric-grin-455920-k5.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

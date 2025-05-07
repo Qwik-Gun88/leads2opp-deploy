@@ -6,7 +6,13 @@ import {
   IconButton,
   Box,
   Button,
+  Tooltip,
 } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ContactsIcon from '@mui/icons-material/Contacts';
+import PhoneIcon from '@mui/icons-material/Phone';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -14,11 +20,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '/assets/logo.png';
 
 const navLinks = [
-  { label: 'Home', path: '/' },
-  { label: 'Dashboard', path: '/dashboard' },
-  { label: 'Contacts Manager', path: '/contacts-manager' },
-  { label: 'Contacts Centre', path: '/contacts-centre' },
-  { label: 'Analytics', path: '/analytics-reporting' },
+  { label: 'Home', path: '/', icon: <HomeIcon /> },
+  { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
+  { label: 'Contacts Manager', path: '/contacts-manager', icon: <ContactsIcon /> },
+  { label: 'Contacts Centre', path: '/contacts-centre', icon: <PhoneIcon /> },
+  { label: 'Analytics', path: '/analytics-reporting', icon: <BarChartIcon /> },
 ];
 
 const HeaderAppBar = () => {
@@ -65,29 +71,44 @@ const HeaderAppBar = () => {
         </Box>
 
         {/* Center Nav */}
-        <Box sx={{ display: 'flex', gap: { xs: 1, md: 2 }, flexWrap: 'wrap', mt: { xs: 1, md: 0 } }}>
-          {navLinks.map(({ label, path }) => {
-            if (location.pathname === path) return null; // hide current page
-            return (
-              <Button
-                key={label}
-                onClick={() => navigate(path)}
-                sx={{
-                  color: '#ffffff',
-                  fontWeight: 500,
-                  textTransform: 'none',
-                  fontSize: '1rem',
-                  px: 2,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.08)',
-                    transform: 'scale(1.05)',
-                  },
-                }}
-              >
-                {label}
-              </Button>
-            );
-          })}
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          {/* 🎨 Creative Centre stays as a button */}
+          {location.pathname !== '/creative-centre' && (
+            <Button
+              onClick={() => navigate('/creative-centre')}
+              variant="contained"
+              sx={{
+                backgroundColor: '#3b82f6',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                px: 2,
+                '&:hover': { backgroundColor: '#2563eb' },
+              }}
+            >
+              🎨 Creative Centre
+            </Button>
+          )}
+
+          {/* All other navs as icons */}
+          {navLinks
+            .filter(({ path }) => path !== '/creative-centre' && path !== location.pathname)
+            .map(({ label, path, icon }) => (
+              <Tooltip title={label} key={label}>
+                <IconButton
+                  onClick={() => navigate(path)}
+                  sx={{
+                    color: '#94a3b8',
+                    '&:hover': {
+                      color: '#38bdf8',
+                      transform: 'scale(1.1)',
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                    },
+                  }}
+                >
+                  {icon}
+                </IconButton>
+              </Tooltip>
+            ))}
         </Box>
 
         {/* Right Icons */}

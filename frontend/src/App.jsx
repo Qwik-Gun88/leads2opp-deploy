@@ -12,8 +12,8 @@ import About from './pages/About';
 import Features from './pages/Features';
 import Contact from './pages/Contact';
 import Pricing from './pages/Pricing';
-
-
+import CreativeCentre from './pages/Dashboard/CreativeCentre';
+import Settings from "./pages/Settings/SettingsPage";
 
 export default function App() {
   return (
@@ -28,6 +28,9 @@ export default function App() {
         <Route path="/updates" element={<Updates />} />  
         <Route path="/dashboard" element={<DashboardLayout />} />
         <Route path="/auto-dialer" element={<AutoDialerPage />} />
+        <Route path="/creative-centre" element={<CreativeCentre />} />
+        <Route path="/settings" element={<Settings />} />
+
   <Route path="/about" element={<About />} />
   <Route path="/features" element={<Features />} />
   <Route path="/contact" element={<Contact />} />

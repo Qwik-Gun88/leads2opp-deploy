@@ -25,6 +25,7 @@ import { useNavigate } from 'react-router-dom';
 import NewsInsightsPanel from "../dashboard/NewsInsightsPanel";
 import DashboardAIAssistant from "../assistant/DashboardAIAssistant";
 import TasksAndEmailsPanel from "../dashboard/TasksAndEmailsPanel";
+import DashboardAppBar from '../../components/layout/DashboardAppBar';
 
 
 const cardStyle = {
@@ -60,25 +61,8 @@ const DashboardLayout = () => {
       color: '#fff',
     }}>
       <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(11, 15, 26, 0.92)', zIndex: 0 }} />
-
-      <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1, py: 1 }}>
-        <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none', borderBottom: '1px solid #1e2a38' }}>
-          <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => navigate('/')}> 
-              <img src="/assets/logo.png" alt="leads2opp logo" style={{ height: 64, marginRight: 8 }} />
-              <Typography variant="h4" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                <span style={{ color: '#3b82f6' }}>Leads</span>
-                <span style={{ background: 'linear-gradient(to right, #8b5cf6, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: '0 4px' }}>2</span>
-                <span style={{ color: '#fb923c' }}>opp</span>
-              </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <IconButton color="inherit"><NotificationsIcon /></IconButton>
-              <IconButton color="inherit"><SettingsIcon /></IconButton>
-              <IconButton color="inherit"><AccountCircle /></IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
+      <DashboardAppBar />
+      <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1, py: 8 }}>
 
         {/* Top Row */}
         <Grid container spacing={2} mt={0} alignItems="stretch">
