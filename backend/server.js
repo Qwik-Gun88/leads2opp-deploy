@@ -1,138 +1,149 @@
+// server.js
+
 import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import multer from "multer";
 import mongoose from "mongoose";
-import cron from "node-cron";
 import * as dotenv from "dotenv";
-import sendEmailRoute from "./routes/sendEmail.js";
-import Contact from "./models/Contact.js";
-import emailTemplatesRoute from './routes/emailTemplates.js';
-import templatesRoute from './routes/templates.js';
-import signatureRoutes from './routes/signatures.js';
-
-// ✅ Vertex AI setup (PredictionServiceClient instead of VertexAI constructor)
-import aiplatform from '@google-cloud/aiplatform';
-const { PredictionServiceClient } = aiplatform.v1;
+import fetch from "node-fetch";
+import { exec } from "child_process";
+import util from "util";
 
 dotenv.config();
 
+const execPromise = util.promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const client = new PredictionServiceClient({
-  keyFilename: path.join(__dirname, 'euphoric-grin-455920-k5-cc478f55fda7.json'),
-});
-
-const project = 'euphoric-grin-455920-k5';
-const location = 'us-central1';
-const model = `projects/${project}/locations/${location}/publishers/google/models/text-bison@001`; // fallback model
-
-async function generateWithVertex(prompt) {
-  const [response] = await client.predict({
-    endpoint: `projects/${project}/locations/${location}/publishers/google/models/text-bison@001`,
-    instances: [{ prompt }],
-    parameters: {
-      temperature: 0.7,
-      maxOutputTokens: 1024,
-    },
-  });
-
-  return response.predictions[0].content || "AI response missing.";
-}
-
-
-// ✅ App setup
+// Express setup
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Routes
-app.use("/api", sendEmailRoute);
-app.use('/api/templates', emailTemplatesRoute);
-app.use('/api', templatesRoute);
-app.use('/api/signatures', signatureRoutes);
-
-// ✅ AI route
-app.post('/api/generate-email', async (req, res) => {
-  const { prompt } = req.body;
-
-  try {
-    const content = await generateWithVertex(prompt);
-    res.json({ content });
-  } catch (error) {
-    console.error('Vertex AI Error:', error);
-    res.status(500).json({ error: 'Failed to generate content' });
-  }
-});
-app.post('/api/generate-sequence', async (req, res) => {
-  const { prompt } = req.body;
-
-  try {
-    // TEMP: Fake output — replace with Vertex AI later
-    const sequence = [
-      { id: '1', type: 'email', label: 'Email 1' },
-      { id: '2', type: 'call', label: 'Call 1' },
-      { id: '3', type: 'text', label: 'Text 1' },
-    ];
-
-    // Convert to node + edge format (React Flow style)
-    const nodes = sequence.map((step, index) => ({
-      id: step.id,
-      type: 'default',
-      data: { label: step.label, stepType: step.type },
-      position: { x: 300, y: index * 180 },
-    }));
-
-    const edges = sequence.slice(1).map((step, index) => ({
-      id: `e${sequence[index].id}-${step.id}`,
-      source: sequence[index].id,
-      target: step.id,
-      type: 'smoothstep',
-    }));
-
-    res.json({ nodes, edges });
-  } catch (err) {
-    console.error('❌ Failed to generate sequence:', err);
-    res.status(500).json({ error: 'Failed to generate sequence' });
-  }
-});
-
-
-// ✅ Serve frontend
-app.use(express.static(path.join(__dirname, './dist')));
-
-// ✅ MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ MongoDB connected"))
-.catch((err) => console.error("❌ MongoDB connection error:", err));
-
-// ✅ File upload
-const upload = multer({ dest: "uploads/" });
-
-// ✅ Debug route
+// Debug route
 app.get("/debug", (req, res) => {
   try {
-    const distPath = path.join(__dirname, "../dist");
+    const distPath = path.join(__dirname, "./dist");
     const files = fs.readdirSync(distPath);
     res.json({ distContents: files });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-// ✅ Fallback route
-app.get("*", (req, res) => {
+// Vertex AI / Gemini config
+const project = process.env.GCP_PROJECT_ID;
+const location = "us-central1";
+const modelId = "gemini-2.0-flash";
+const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${project}/locations/${location}/publishers/google/models/${modelId}:streamGenerateContent`;
+
+// Function to obtain access token
+async function getAccessToken() {
+  try {
+    const { stdout } = await execPromise("gcloud auth application-default print-access-token");
+    return stdout.trim();
+  } catch (err) {
+    console.error("Error obtaining access token:", err.message);
+    throw new Error("Failed to obtain access token.");
+  }
+}
+
+// Call Gemini to generate content
+// Call Gemini to generate content
+async function generateWithGemini(prompt) {
+  const accessToken = await getAccessToken();
+
+  const payload = {
+    contents: {
+      role: "user",
+      parts: [
+        {
+          text: prompt,
+        },
+      ],
+    },
+  };
+
+  try {
+    console.log("🔍 Sending payload to Gemini:", JSON.stringify(payload, null, 2));
+
+    const resp = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    console.log("🔍 Response Status:", resp.status);
+    console.log("🔍 Response Headers:", JSON.stringify([...resp.headers]));
+
+    const data = await resp.json();
+    console.log("🔍 Full Gemini Response:", JSON.stringify(data, null, 2));
+
+    if (!resp.ok) {
+      console.error("❌ Gemini API Error:", data.error?.message || "Unknown Error");
+      console.log("🔍 Error Details:", JSON.stringify(data, null, 2));
+      throw new Error("Failed to generate content using Gemini.");
+    }
+
+    if (!Array.isArray(data) || data.length === 0) {
+      console.error("❌ Invalid Gemini response structure. Expected a non-empty array.");
+      throw new Error("No valid response received from Gemini.");
+    }
+
+    // Extract content from all response objects
+    const content = data
+      .flatMap(item => item.candidates) // Collect all candidate arrays
+      .flatMap(candidate => candidate.content?.parts || []) // Collect all parts
+      .map(part => part.text) // Extract text content
+      .join(" "); // Combine into a single string
+
+    console.log("✅ Generated Content:", content);
+
+    return content;
+  } catch (error) {
+    console.error("❌ Vertex AI Error:", error.message);
+    throw new Error("Failed to generate content using Gemini.");
+  }
+}
+
+// Endpoint for generating email content
+app.post("/api/generate-email", async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is required." });
+    }
+
+    const content = await generateWithGemini(prompt);
+    res.json({ content });
+  } catch (err) {
+    console.error("❌ Generate Email Error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch(err => console.error("❌ MongoDB connection error:", err.message));
+
+// Static files and fallback route
+app.use(express.static(path.join(__dirname, "./dist")));
+app.get("*", (_, res) => {
   res.sendFile(path.join(__dirname, "./dist/index.html"));
 });
 
-// ✅ Start server
+// Start the server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🔥 leads2opp backend fully deployed on port ${PORT}`);
+  console.log(`🔥 Server running on port ${PORT}`);
 });

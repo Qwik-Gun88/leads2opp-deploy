@@ -21,6 +21,9 @@ RUN cd backend && npm install
 # Copy backend source
 COPY backend ./backend
 
+# Copy Vertex AI Key
+COPY backend/euphoric-grin-455920-k5-b25a345972e7.json ./euphoric-grin-455920-k5-b25a345972e7.json
+
 # Move frontend build into root /dist (served by backend)
 RUN cp -r ./frontend/dist ./dist
 

@@ -1,21 +1,32 @@
-// backend/models/Contact.js
-import mongoose from "mongoose";
+import express from "express";
+import Contact from "../models/Contact.js";
 
-const contactSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  jobTitle: String,
-  company: String,
-  email: String,
-  phone: String,
-  linkedin: String,
-  city: String,
-  state: String,
-  country: String,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+const router = express.Router();
+
+// POST /api/contacts - Create a new contact
+router.post("/contacts", async (req, res) => {
+  try {
+    const { firstName, lastName, jobTitle, company, email, phone, linkedin, city, state, country } = req.body;
+
+    const newContact = new Contact({
+      firstName,
+      lastName,
+      jobTitle,
+      company,
+      email,
+      phone,
+      linkedin,
+      city,
+      state,
+      country,
+    });
+
+    await newContact.save();
+    res.status(201).json(newContact);
+  } catch (err) {
+    console.error("Error saving contact:", err.message);
+    res.status(500).json({ error: "Failed to save contact" });
+  }
 });
 
-export default mongoose.model("Contact", contactSchema);
+export default router;
