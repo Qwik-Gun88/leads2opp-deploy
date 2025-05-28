@@ -147,12 +147,6 @@ const Homepage = () => {
     }}
   />
 
-  {/* Brand Name - No Gradient */}
-  <Typography variant="h2" sx={{ fontWeight: 800, fontSize: { xs: '2.5rem', md: '3.8rem' }, mb: 1 }}>
-    <span style={{ color: '#3b82f6' }}>Leads</span>
-    <span style={{ margin: '0 6px', color: '#8b5cf6' }}>2</span>
-    <span style={{ color: '#fb923c' }}>Opp</span>
-  </Typography>
           <Typography
             variant="h2"
             className="glow-title"

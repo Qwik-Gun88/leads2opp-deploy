@@ -1,37 +1,42 @@
-options:
-  logging: CLOUD_LOGGING_ONLY
-
 steps:
-  - name: 'node:20-slim'
-    entrypoint: 'bash'
+  # Step 1: Install frontend dependencies & build
+  - name: 'node:18'
     dir: 'frontend'
+    entrypoint: npm
+    args: ['install']
+
+  - name: 'node:18'
+    dir: 'frontend'
+    entrypoint: npm
+    args: ['run', 'build']
+
+  # Step 2: Copy frontend build into backend
+  - name: 'gcr.io/cloud-builders/gsutil'
+    entrypoint: bash
     args:
       - '-c'
       - |
-        npm install && npm run build
+        mkdir -p backend/dist && cp -r frontend/dist/* backend/dist/
 
+  # Step 3: Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/backend-api', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/leads2opp-api', '.']
 
+  # Step 4: Push image to registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/backend-api']
+    args: ['push', 'gcr.io/$PROJECT_ID/leads2opp-api']
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
+  # Step 5: Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - run
       - deploy
-      - backend-api
-      - --image
-      - gcr.io/$PROJECT_ID/backend-api
-      - --region
-      - us-central1
-      - --platform
-      - managed
+      - leads2opp-api
+      - --image=gcr.io/$PROJECT_ID/leads2opp-api
+      - --region=us-central1
+      - --platform=managed
       - --allow-unauthenticated
-      - --update-secrets
-      - FIREBASE_CONFIG=firebase-config:latest
-      - --command
-      - node
-      - --args
-      - backend/server.js
+      - --quiet
+
+images:
+  - gcr.io/$PROJECT_ID/leads2opp-api
